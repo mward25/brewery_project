@@ -105,29 +105,25 @@ namespace BreweryProjectTests
             Assert.AreEqual(theBrew.ScheduledDate, theDate);
         }
 
-        //[Test]
-        //public void UpdateTest()
-        //{
-        //    theBrew = dbContext.Brews.Find(2);
-        //    string oBrewId = theBrew.BrewId;
-        //    int oQuant = theBrew.Quantity;
+        [Test]
+        public void UpdateTest()
+        {
+            theBrew = dbContext.Brews.Find(2);
+            int oBrewId = theBrew.BrewId;
+            DateTime oldDate = theBrew.ScheduledDate;
+            
+            DateTime nDate = new DateTime(2022, 10, 2);
+            theBrew.ScheduledDate = nDate;
 
-        //    theBrew.BrewId = "Beets";
-        //    theBrew.Quantity = 30;
-        //    
-        //    string nBrewId = theBrew.BrewId;
-        //    int nQuant = theBrew.Quantity;
-
-        //    dbContext.Update(theBrew);
-        //    dbContext.SaveChanges();
-        //    
-        //    
-        //    theBrew = dbContext.Brews.Find(2);
-        //    
-        //    Assert.AreEqual(theBrew.BrewId, nBrewId);
-
-        //    Assert.AreNotEqual(theBrew.Quantity, oBrewId);
-        //}
+            dbContext.Update(theBrew);
+            dbContext.SaveChanges();
+            
+            
+            theBrew = dbContext.Brews.Find(2);
+            
+            Assert.AreNotEqual(theBrew.ScheduledDate, oldDate);
+            Assert.AreEqual(theBrew.ScheduledDate, nDate);
+        }
 
         public void PrintAll(List<Brew> brews)
         {
