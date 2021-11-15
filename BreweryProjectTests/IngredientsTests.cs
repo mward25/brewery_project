@@ -38,6 +38,7 @@ namespace BreweryProjectTests
         {
                 int a = 5;
                 Assert.AreEqual(5, a);
+                Console.WriteLine("if this test fails, it means something is fundumentaly wrong with nUnit.");
         }
 
         [Test]
@@ -87,47 +88,47 @@ namespace BreweryProjectTests
             Assert.IsNull(dbContext.Ingredients.Find(2));
         }
 
-        //[Test]
-        //public void CreateTest()
-        //{
+        [Test]
+        public void CreateTest()
+        {
+            theIngredient = new Ingredient();
+            theIngredient.Name = "Wheat";
+            theIngredient.Quantity = 2;
+            dbContext.Add(theIngredient);
+            dbContext.SaveChanges();
+            
+            int theIngredientID = theIngredient.IngredientId;
+            string theName = theIngredient.Name;
+            int theQuant = theIngredient.Quantity;
 
-        //            theIngredient = new State();
-        //            theIngredient.StateCode = "??";
-        //            theIngredient.StateName = "Confused";
-        //            dbContext.Add(theIngredient);
-        //            dbContext.SaveChanges();
-        //            
-        //            string stateC = theIngredient.StateCode;
-        //            string stateN = theIngredient.StateName;
+            theIngredient = dbContext.Ingredients.Find(theIngredientID);
+            Assert.AreEqual(theIngredient.Quantity, theQuant);
+            Assert.AreEqual(theIngredient.Name, theName);
+        }
 
-        //            theIngredient = dbContext.Ingredients.Find("??");
-        //            Assert.AreEqual(theIngredient.StateCode, stateC);
-        //            Assert.AreEqual(theIngredient.StateName, stateN);
-        //}
+        [Test]
+        public void UpdateTest()
+        {
+            theIngredient = dbContext.Ingredients.Find(2);
+            string oName = theIngredient.Name;
+            int oQuant = theIngredient.Quantity;
 
-        //[Test]
-        //public void UpdateTest()
-        //{
-        //    theIngredient = dbContext.Ingredients.Find("T");
-        //    string oCode = theIngredient.StateCode;
-        //    string oName = theIngredient.StateName;
+            theIngredient.Name = "Beets";
+            theIngredient.Quantity = 30;
+            
+            string nName = theIngredient.Name;
+            int nQuant = theIngredient.Quantity;
 
-        //    theIngredient.StateCode = "T";
-        //    theIngredient.StateName = "10 a c";
-        //    
-        //    string nCode = theIngredient.StateCode;
-        //    string nName = theIngredient.StateName;
+            dbContext.Update(theIngredient);
+            dbContext.SaveChanges();
+            
+            
+            theIngredient = dbContext.Ingredients.Find(2);
+            
+            Assert.AreEqual(theIngredient.Name, nName);
 
-        //    dbContext.Update(theIngredient);
-        //    dbContext.SaveChanges();
-        //    
-        //    
-        //    theIngredient = dbContext.Ingredients.Find("T");
-        //    
-        //    Assert.AreEqual(theIngredient.StateName, nName);
-
-        //    Assert.AreNotEqual(theIngredient.StateName, oName);
-        //}
+            Assert.AreNotEqual(theIngredient.Quantity, oName);
+        }
 
         public void PrintAll(List<Ingredient> ingredients)
         {
