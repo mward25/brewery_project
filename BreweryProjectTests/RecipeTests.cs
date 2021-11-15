@@ -41,96 +41,102 @@ namespace BreweryProjectTests
             Console.WriteLine("if this test fails, it means something is fundumentaly wrong with nUnit.");
         }
 
-        //[Test]
-        //public void GetAllTest()
-        //{
-        //    recipes = dbContext.Brews.OrderBy(theRecipe => theRecipe.BrewId).ToList();
-        //    Assert.AreEqual(2, recipes.Count);
-        //    Assert.AreEqual("12/21/2021 12:00:00 AM", recipes[0].ScheduledDate.ToString());
-        //    PrintAll(recipes);
-        //}
+        [Test]
+        public void GetAllTest()
+        {
+            recipes = dbContext.Recipes.OrderBy(theRecipe => theRecipe.Name).ToList();
+            Assert.AreEqual(2, recipes.Count);
+            Assert.AreEqual("densier", recipes[0].Name);
+            PrintAll(recipes);
+        }
 
-        //[Test]
-        //public void GetByPrimaryKeyTest()
-        //{
-        //    theRecipe = dbContext.Brews.Find(1);
-        //    Assert.IsNotNull(theRecipe);
-        //    Console.WriteLine(theRecipe);
-        //}
+        [Test]
+        public void GetByPrimaryKeyTest()
+        {
+            theRecipe = dbContext.Recipes.Find(1);
+            Assert.IsNotNull(theRecipe);
+            Console.WriteLine(theRecipe);
+        }
 
-        //[Test]
-        //public void GetUsingWhere()
-        //{
-        //    // current version generates a null processing error StartsWith can't operate on a nullable value
-        //    recipes = dbContext.Brews.Where(theRecipe => theRecipe.BrewId == 2).OrderBy(theRecipe => theRecipe.Done).ToList();
-        //    Assert.AreEqual(1, recipes.Count);
-        //    Assert.AreEqual(false, recipes[0].Done);
-        //    PrintAll(recipes);
-        //}
+        [Test]
+        public void GetUsingWhere()
+        {
+            // current version generates a null processing error StartsWith can't operate on a nullable value
+            recipes = dbContext.Recipes.Where(theRecipe => theRecipe.RecipeId == 2).OrderBy(theRecipe => theRecipe.Name).ToList();
+            Assert.AreEqual(1, recipes.Count);
+            Assert.AreEqual("densier", recipes[0].Name);
+            PrintAll(recipes);
+        }
 
+        // Aren't all the //////'s nice
         //////[Test]
         //////public void GetWithCustomersTest()
         //////{
-        //////    theRecipe = dbContext.Brews.Include("Customers").Where(theRecipe => theRecipe.StateCode == "OR").SingleOrDefault();
+        //////    theRecipe = dbContext.Recipes.Include("Customers").Where(theRecipe => theRecipe.StateCode == "OR").SingleOrDefault();
         //////    Assert.IsNotNull(theRecipe);
-        //////    Assert.AreEqual("Oregon", theRecipe.StateBrewId);
+        //////    Assert.AreEqual("Oregon", theRecipe.StateName);
         //////    Assert.AreEqual(5, theRecipe.Customers.Count);
         //////    Console.WriteLine(theRecipe);
         //////}
 
-        //[Test]
-        //public void DeleteTest()
-        //{
-        //    theRecipe = dbContext.Brews.Find(2);
-        //    dbContext.Brews.Remove(theRecipe);
-        //    dbContext.SaveChanges();
-        //    Assert.IsNull(dbContext.Brews.Find(2));
-        //}
+        [Test]
+        public void DeleteTest()
+        {
+            theRecipe = dbContext.Recipes.Find(2);
+            dbContext.Recipes.Remove(theRecipe);
+            dbContext.SaveChanges();
+            Assert.IsNull(dbContext.Recipes.Find(2));
+        }
 
-        //[Test]
-        //public void CreateTest()
-        //{
-        //    theRecipe = new Brew();
-        //    theRecipe.RecipeId = ((dbContext.Recipes.Where(theRecipe => theRecipe.Name == "densier").ToList())[0]).RecipeId;
-        //    theRecipe.ScheduledDate = new DateTime(2022, 12, 20);
-        //    dbContext.Add(theRecipe);
-        //    dbContext.SaveChanges();
-        //    
-        //    int theBrewId = theRecipe.BrewId;
-        //    DateTime theDate = theRecipe.ScheduledDate;
+        [Test]
+        public void CreateTest()
+        {
+            theRecipe = new Recipe();
+            theRecipe.Name = "fuzzy beer"; 
+            theRecipe.Style = "fuzzy :)";
+            theRecipe.Version = 1;
+            theRecipe.Ibu = 20m;
+            theRecipe.Abv = 10m;
+            theRecipe.Active = true;
+            dbContext.Add(theRecipe);
+            dbContext.SaveChanges();
+            
+            string theName = theRecipe.Name;
+            string theStyle = theRecipe.Style;
+            decimal theIbu = theRecipe.Ibu;
 
-        //    theRecipe = dbContext.Brews.Find(theBrewId);
-        //    Assert.AreEqual(theRecipe.BrewId, theBrewId);
-        //    Assert.AreEqual(theRecipe.ScheduledDate, theDate);
-        //}
+            theRecipe = dbContext.Recipes.Find(theRecipe.RecipeId);
+            Assert.AreEqual(theRecipe.Name, theName);
+            Assert.AreEqual(theRecipe.Style, theStyle);
+            Assert.AreEqual(theRecipe.Ibu, theIbu);
+        }
 
-        //[Test]
-        //public void UpdateTest()
-        //{
-        //    theRecipe = dbContext.Brews.Find(2);
-        //    int oBrewId = theRecipe.BrewId;
-        //    DateTime oldDate = theRecipe.ScheduledDate;
-        //    
-        //    DateTime nDate = new DateTime(2022, 10, 2);
-        //    theRecipe.ScheduledDate = nDate;
+        [Test]
+        public void UpdateTest()
+        {
+            theRecipe = dbContext.Recipes.Find(2);
+            string oName = theRecipe.Name;
+            
+            theRecipe.Name = "BAD_BEER_DONT_BUY";
+            string nName = theRecipe.Name;
 
-        //    dbContext.Update(theRecipe);
-        //    dbContext.SaveChanges();
-        //    
-        //    
-        //    theRecipe = dbContext.Brews.Find(2);
-        //    
-        //    Assert.AreNotEqual(theRecipe.ScheduledDate, oldDate);
-        //    Assert.AreEqual(theRecipe.ScheduledDate, nDate);
-        //}
+            dbContext.Update(theRecipe);
+            dbContext.SaveChanges();
+            
+            
+            theRecipe = dbContext.Recipes.Find(2);
+            
+            Assert.AreNotEqual(theRecipe.Name, oName);
+            Assert.AreEqual(theRecipe.Name, nName);
+        }
 
-        //public void PrintAll(List<Brew> recipes)
-        //{
-        //    foreach (Brew theRecipe in recipes)
-        //    {
-        //        Console.WriteLine(theBrew.BrewId);
-        //    }
-        //}
+        public void PrintAll(List<Recipe> recipes)
+        {
+            foreach (Recipe theRecipe in recipes)
+            {
+                Console.WriteLine(theRecipe.Name);
+            }
+        }
         
     }
 }
