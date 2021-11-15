@@ -1,0 +1,1 @@
+Note, .mm files should be opened with freeplane
