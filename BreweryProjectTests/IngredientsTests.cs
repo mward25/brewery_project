@@ -19,12 +19,19 @@ namespace BreweryProjectTests
         //List<State> states;
         List<Ingredient> ingredients;
 
-        //[SetUp]
-        //public void Setup()
-        //{
-        //    dbContext = new MMABooksContext();
-        //    dbContext.Database.ExecuteSqlRaw("CALL usp_testingResetData()");
-        //}
+        [SetUp]
+        public void Setup()
+        {
+            dbContext = new BreweryProjectContext();
+           try 
+           {
+                dbContext.Database.ExecuteSqlRaw("CALL usp_testing_reset_data()");
+           }
+           catch (Exception e)
+           {
+                Console.WriteLine("you should probobly fix the exception in your code miles!!!");
+           }
+        }
 
         [Test]
         public void testTest()
@@ -32,102 +39,103 @@ namespace BreweryProjectTests
                 int a = 5;
                 Assert.AreEqual(5, a);
         }
-        //[Test]
-        //public void GetAllTest()
-        //{
-        //    states = dbContext.States.OrderBy(s => s.StateName).ToList();
-        //    Assert.AreEqual(53, states.Count);
-        //    Assert.AreEqual("Alabama", states[0].StateName);
-        //    PrintAll(states);
-        //}
 
-        //[Test]
-        //public void GetByPrimaryKeyTest()
-        //{
-        //    s = dbContext.States.Find("OR");
-        //    Assert.IsNotNull(s);
-        //    Assert.AreEqual("Oregon", s.StateName);
-        //    Console.WriteLine(s);
-        //}
+        [Test]
+        public void GetAllTest()
+        {
+            ingredients = dbContext.Ingredients.OrderBy(theIngredient => theIngredient.Name).ToList();
+            Assert.AreEqual(3, ingredients.Count);
+            Assert.AreEqual("Beets", ingredients[0].Name);
+            PrintAll(ingredients);
+        }
 
-        //[Test]
-        //public void GetUsingWhere()
-        //{
-        //    // current version generates a null processing error StartsWith can't operate on a nullable value
-        //    states = dbContext.States.Where(s => s.StateName == "Oregon").OrderBy(s => s.StateName).ToList();
-        //    Assert.AreEqual(1, states.Count);
-        //    Assert.AreEqual("OR", states[0].StateCode);
-        //    PrintAll(states);
-        //}
+        [Test]
+        public void GetByPrimaryKeyTest()
+        {
+            theIngredient = dbContext.Ingredients.Find(1);
+            Assert.IsNotNull(theIngredient);
+            Assert.AreEqual("Horse Radish", theIngredient.Name);
+            Console.WriteLine(theIngredient);
+        }
+
+        [Test]
+        public void GetUsingWhere()
+        {
+            // current version generates a null processing error StartsWith can't operate on a nullable value
+            ingredients = dbContext.Ingredients.Where(theIngredient => theIngredient.Name == "POTATO").OrderBy(theIngredient => theIngredient.Name).ToList();
+            Assert.AreEqual(1, ingredients.Count);
+            Assert.AreEqual("POTATO", ingredients[0].Name);
+            PrintAll(ingredients);
+        }
 
         //[Test]
         //public void GetWithCustomersTest()
         //{
-        //    s = dbContext.States.Include("Customers").Where(s => s.StateCode == "OR").SingleOrDefault();
-        //    Assert.IsNotNull(s);
-        //    Assert.AreEqual("Oregon", s.StateName);
-        //    Assert.AreEqual(5, s.Customers.Count);
-        //    Console.WriteLine(s);
+        //    theIngredient = dbContext.Ingredients.Include("Customers").Where(theIngredient => theIngredient.StateCode == "OR").SingleOrDefault();
+        //    Assert.IsNotNull(theIngredient);
+        //    Assert.AreEqual("Oregon", theIngredient.StateName);
+        //    Assert.AreEqual(5, theIngredient.Customers.Count);
+        //    Console.WriteLine(theIngredient);
         //}
 
-        //[Test]
-        //public void DeleteTest()
-        //{
-        //    s = dbContext.States.Find("HI");
-        //    dbContext.States.Remove(s);
-        //    dbContext.SaveChanges();
-        //    Assert.IsNull(dbContext.States.Find("HI"));
-        //}
+        [Test]
+        public void DeleteTest()
+        {
+            theIngredient = dbContext.Ingredients.Find(2);
+            dbContext.Ingredients.Remove(theIngredient);
+            dbContext.SaveChanges();
+            Assert.IsNull(dbContext.Ingredients.Find(2));
+        }
 
         //[Test]
         //public void CreateTest()
         //{
 
-        //            s = new State();
-        //            s.StateCode = "??";
-        //            s.StateName = "Confused";
-        //            dbContext.Add(s);
+        //            theIngredient = new State();
+        //            theIngredient.StateCode = "??";
+        //            theIngredient.StateName = "Confused";
+        //            dbContext.Add(theIngredient);
         //            dbContext.SaveChanges();
         //            
-        //            string stateC = s.StateCode;
-        //            string stateN = s.StateName;
+        //            string stateC = theIngredient.StateCode;
+        //            string stateN = theIngredient.StateName;
 
-        //            s = dbContext.States.Find("??");
-        //            Assert.AreEqual(s.StateCode, stateC);
-        //            Assert.AreEqual(s.StateName, stateN);
+        //            theIngredient = dbContext.Ingredients.Find("??");
+        //            Assert.AreEqual(theIngredient.StateCode, stateC);
+        //            Assert.AreEqual(theIngredient.StateName, stateN);
         //}
 
         //[Test]
         //public void UpdateTest()
         //{
-        //    s = dbContext.States.Find("T");
-        //    string oCode = s.StateCode;
-        //    string oName = s.StateName;
+        //    theIngredient = dbContext.Ingredients.Find("T");
+        //    string oCode = theIngredient.StateCode;
+        //    string oName = theIngredient.StateName;
 
-        //    s.StateCode = "T";
-        //    s.StateName = "10 a c";
+        //    theIngredient.StateCode = "T";
+        //    theIngredient.StateName = "10 a c";
         //    
-        //    string nCode = s.StateCode;
-        //    string nName = s.StateName;
+        //    string nCode = theIngredient.StateCode;
+        //    string nName = theIngredient.StateName;
 
-        //    dbContext.Update(s);
+        //    dbContext.Update(theIngredient);
         //    dbContext.SaveChanges();
         //    
         //    
-        //    s = dbContext.States.Find("T");
+        //    theIngredient = dbContext.Ingredients.Find("T");
         //    
-        //    Assert.AreEqual(s.StateName, nName);
+        //    Assert.AreEqual(theIngredient.StateName, nName);
 
-        //    Assert.AreNotEqual(s.StateName, oName);
+        //    Assert.AreNotEqual(theIngredient.StateName, oName);
         //}
 
-        //public void PrintAll(List<State> states)
-        //{
-        //    foreach (State s in states)
-        //    {
-        //        Console.WriteLine(s);
-        //    }
-        //}
+        public void PrintAll(List<Ingredient> ingredients)
+        {
+            foreach (Ingredient theIngredient in ingredients)
+            {
+                Console.WriteLine(theIngredient.Name);
+            }
+        }
         
     }
 }
