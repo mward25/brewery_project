@@ -37,11 +37,30 @@ CREATE TABLE IF NOT EXISTS RecipeIngredient(
 
 
 
+-- Horse Radish
 INSERT Ingredient (Name, Quantity) VALUES ('Horse Radish', 30);
-INSERT Ingredient (Name, Quantity) VALUES ('Beets', 20);
+SELECT LAST_INSERT_ID() INTO @beet_id;
 
+-- Beets
+INSERT Ingredient (Name, Quantity) VALUES ('Beets', 20);
+SELECT LAST_INSERT_ID() INTO @horse_radish_id;
+
+-- Horse radish beer
 INSERT Recipe(Name, Style, Version, IBU, ABV) VALUES ('Pickled Beet and Horseradish Beer', 'realy bad', 1, 90, 50);
+SELECT LAST_INSERT_ID() INTO @horse_radish_beer_id;
+INSERT INTO RecipeIngredient (RecipeID, IngredientID, AmountInRecipe) VALUES (@horse_radish_beer_id, @horse_radish_id, 43);
+INSERT INTO RecipeIngredient (RecipeID, IngredientID, AmountInRecipe) VALUES (@horse_radish_beer_id, @beet_id, 20);
+
+
+
+INSERT Ingredient (Name, Quantity) VALUES ('POTATO', 45);
+SELECT LAST_INSERT_ID() INTO @potato_id;
 INSERT Recipe(Name, Style, Version, IBU, ABV) VALUES ('densier', 'ok', 1, 20, 4);
+SELECT LAST_INSERT_ID() INTO @densier_beer_id;
+INSERT INTO RecipeIngredient (RecipeID, IngredientID, AmountInRecipe) VALUES (@densier_beer_id, @potato_id, 9999);
+
+
+
 
 
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS; 
