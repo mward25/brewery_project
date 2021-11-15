@@ -61,6 +61,7 @@ INSERT INTO RecipeIngredient (RecipeID, IngredientID, AmountInRecipe) VALUES (@d
 
 
 INSERT INTO Brew (RecipeID, ScheduledDate, Done) VALUES (@densier_beer_id, '2021-12-21', FALSE);
+INSERT INTO Brew (RecipeID, ScheduledDate, Done) VALUES (@horse_radish_beer_id, '2021-11-30', FALSE);
 
 
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS; 
@@ -86,6 +87,7 @@ REFERENCES Recipe (RecipeID)
 
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 
+DROP PROCEDURE IF EXISTS usp_testing_reset_data; 
 DELIMITER //
 CREATE PROCEDURE usp_testing_reset_data()
 BEGIN
@@ -124,6 +126,10 @@ BEGIN
             AmountInRecipe int NOT NULL);
 
 
+        DELETE FROM Ingredient;
+        DELETE FROM Brew;
+        DELETE FROM Recipe;
+        DELETE FROM RecipeIngredient;
 
         -- Horse Radish
         INSERT Ingredient (Name, Quantity) VALUES ('Horse Radish', 30);
@@ -148,7 +154,9 @@ BEGIN
         INSERT INTO RecipeIngredient (RecipeID, IngredientID, AmountInRecipe) VALUES (@densier_beer_id, @potato_id, 9999);
 
 
+        -- schedule some beer
         INSERT INTO Brew (RecipeID, ScheduledDate, Done) VALUES (@densier_beer_id, '2021-12-21', FALSE);
+        INSERT INTO Brew (RecipeID, ScheduledDate, Done) VALUES (@horse_radish_beer_id, '2021-12-21', FALSE);
 
 
         SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS; 
@@ -172,6 +180,5 @@ BEGIN
         REFERENCES Recipe (RecipeID)
             ON DELETE CASCADE;
 
-        SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 END//
-
+DELIMITER ;
