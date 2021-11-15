@@ -52,7 +52,7 @@ INSERT INTO RecipeIngredient (RecipeID, IngredientID, AmountInRecipe) VALUES (@h
 INSERT INTO RecipeIngredient (RecipeID, IngredientID, AmountInRecipe) VALUES (@horse_radish_beer_id, @beet_id, 20);
 
 
-
+-- Densier beer
 INSERT Ingredient (Name, Quantity) VALUES ('POTATO', 45);
 SELECT LAST_INSERT_ID() INTO @potato_id;
 INSERT Recipe(Name, Style, Version, IBU, ABV) VALUES ('densier', 'ok', 1, 20, 4);
@@ -60,7 +60,7 @@ SELECT LAST_INSERT_ID() INTO @densier_beer_id;
 INSERT INTO RecipeIngredient (RecipeID, IngredientID, AmountInRecipe) VALUES (@densier_beer_id, @potato_id, 9999);
 
 
-
+INSERT INTO Brew (RecipeID, ScheduledDate, Done) VALUES (@densier_beer_id, '2021-12-21', FALSE);
 
 
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS; 
