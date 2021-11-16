@@ -5,13 +5,12 @@ using System.Collections.Generic;
 
 namespace BreweryProjectEFCore.Models
 {
-    public partial class Recipeingredient
+    public partial class IngredientSubstitute
     {
-        public int RecipeId { get; set; }
         public int IngredientId { get; set; }
-        public int AmountInRecipe { get; set; }
+        public int SubstituteIngredientId { get; set; }
 
         public virtual Ingredient Ingredient { get; set; }
-        public virtual Recipe Recipe { get; set; }
+        public virtual Ingredient SubstituteIngredient { get; set; }
     }
 }
