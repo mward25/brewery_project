@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Collections.Generic;
 using System;
 
 using NUnit.Framework;
@@ -24,7 +25,6 @@ namespace BrewProjectTests
         public void TearDown()
         {
                 List<Recipe> testRecipes = dbContext.Recipes.OrderBy(theList => theList.Name).ToList();
-                //Console.WriteLine("running TearDown function in BatchTests");
                 PrintAll(testRecipes);
                 foreach (Recipe batchInBatches in testRecipes)
                 {
@@ -35,7 +35,6 @@ namespace BrewProjectTests
                 }
 
                 dbContext.SaveChanges();
-                //Console.WriteLine("stopping TearDown function in BatchTests");
         }
 
 
