@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MMABooksEFClasses\BreweryProjectEFCore.csproj" />
+    <ProjectReference Include="..\BreweryProjectEFClasses\BreweryProjectEFCore.csproj" />
   </ItemGroup>
 
 </Project>
