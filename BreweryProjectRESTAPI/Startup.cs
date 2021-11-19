@@ -7,6 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using BreweryProjectEFCore.Models;
+using BreweryProjectEFCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +28,17 @@ namespace BreweryProjectRESTAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // add cors policy - in a production app lock this down!
+            services.AddCors(options => {
+                options.AddDefaultPolicy(
+                builder => {
+                    builder.AllowAnyOrigin()
+                    .WithMethods("POST", "PUT", "DELETE", "GET", "OPTIONS")
+                    .AllowAnyHeader();
+                });
+            });
+            // adding the dbContext to the service
+            services.AddDbContext<BreweryProjectContext>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
