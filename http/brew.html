@@ -1,3 +1,4 @@
+Access-Control-Allow-Origin: *
 <html>
 <head><title>Brewery webpage</title></head>
 <body>
@@ -62,7 +63,8 @@
 <p style="text-align:center;"> </input> </p>
 
 <!-- Name | Version | Style | IBU | ABV | Ingredients | Last Brewed | Inventory | Schedule a Brew --!>
-<table class="tg">
+	<!--div id="nonScheduledBrewsTable">--!>
+<table class="tg" id="nonScheduledBrewsTable">
 <thead>
 <tr>
 	<th bgcolor=#CBC3E3>Version</th>
@@ -77,8 +79,8 @@
 </tr>
 </thead>
 <tbody>
-<tr>
-	<td><label for="Version">Ver</label>
+<!--<tr>
+	td><label for="Version">Ver</label>
 		<select name="Version" id="Version">
 			<option value=0>0</option>
 			<option value=1>1</option>
@@ -92,4 +94,101 @@
 	<td><a href="page_not_found.html">Inventory</a></td>
 	<td><button>Add to brew</button></td>
 </tr>
+--!>
+<!--</div id="nonScheduledBrewsTable">--!>
+
 </table>
+
+<button type="button" value="generate table" onclick="GenerateTable()"/>
+<hr />
+<div id="dvTable"></div>
+	<script type="text/javascript">
+			const SERVER_URL = "https://localhost:44344/api/";
+			const RECIPIES = "recipes/";
+			const GET_INSTRUCT = "GET";
+			const HEADER_VALUE = "*";
+			const HEADER = "Access-Control-Allow-Origin" + ": " + HEADER_VALUE;
+			function GenerateTable() 
+			{
+				var theTable = document.getElementById("nonScheduledBrewsTable");
+				
+				var theData = new XMLHttpRequest();
+				//theData.Header = HEADER;
+				theData.open(GET_INSTRUCT, SERVER_URL + RECIPIES);
+				//theData.setRequestHeader('X-Requested-With', 'XMLHttpRequest'); 
+				theData.setRequestHeader('Access-Control-Allow-Origin', 'SERVER_URL');
+				//Access-Control-Allow-Origin
+				//theData.setRequestHeader("Sec-Fetch-Mode", "no-cors");
+				theData.setRequestHeader('Content-type', 'application/json');
+				theData.send();
+				theData.onload = (e) => {
+					console.log(theData.response);
+
+					for (let i = 0; i < theData.length; i++)
+					{
+						var theRow = theTable.insertRow(1);
+
+						var versionCell             = theRow.insertCell(0);
+						var nameCell                = theRow.insertCell(1);
+						var styleCell               = theRow.insertCell(2);
+						var ibuCell                 = theRow.insertCell(3);
+						var abvCell                 = theRow.insertCell(4);
+						var ingredientsCell         = theRow.insertCell(0);
+						var lastBrewedCell          = theRow.insertCell(0);
+						var inventoryCell           = theRow.insertCell(0);
+						var addToScheduledBrewsCell = theRow.insertCell(0);
+
+						versionCell           .innerHTML = theData[i].version; 
+						nameCell              .innerHTML = theData[i].name;
+						styleCell             .innerHTML = theData[i].style.name; 
+						ibuCell               .innerHTML = theData[i].ibu;
+						abvCell               .innerHTML = theData[i].abv;
+						ingredientsCell       .innerHTML = "   ";/*"<a> href=page_not_found.html </a>";*/
+						lastBrewedCell        .innerHTML = "   ";/*"<a> href=page_not_found.html </a>";*/
+						inventoryCell         .innerHTML = "   ";/*"<a> href=page_not_found.html </a>";*/
+						addToScheduledBrewsCel.innerHTML = "   ";/*"<button> add to brew </button>";*/
+					}
+				}
+
+
+
+			//	//Build an array containing Customer records.
+			//	var customers = new Array();
+			//	customers.push(["Customer Id", "Name", "Country"]);
+			//	customers.push([1, "John Hammond", "United States"]);
+			//	customers.push([2, "Mudassar Khan", "India"]);
+			//	customers.push([3, "Suzanne Mathews", "France"]);
+			//	customers.push([4, "Robert Schidner", "Russia"]);
+			//	
+			//	//Create a HTML Table element.
+			//	var table = document.createElement("TABLE");
+			//	table.border = "1";
+			//	
+			//	//Get the count of columns.
+			//	var columnCount = customers[0].length;
+			//	
+			//	//Add the header row.
+			//	var row = table.insertRow(-1);
+			//	for (var i = 0; i < columnCount; i++) 
+			//	{
+			//		var headerCell = document.createElement("TH");
+			//		headerCell.innerHTML = customers[0][i];
+			//		row.appendChild(headerCell);
+			//	}
+			//	
+			//	//Add the data rows.
+			//	for (var i = 1; i < customers.length; i++) 
+			//	{
+			//		row = table.insertRow(-1);
+			//		for (var j = 0; j < columnCount; j++) 
+			//		{
+			//			var cell = row.insertCell(-1);
+			//			cell.innerHTML = customers[i][j];
+			//		}
+			//	}
+			//		
+			//		var dvTable = document.getElementById("dvTable");
+			//		dvTable.innerHTML = "";
+			//		dvTable.appendChild(table);
+			}
+	</script>
