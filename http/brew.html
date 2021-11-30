@@ -105,13 +105,51 @@ Access-Control-Allow-Origin: *
 	<script type="text/javascript">
 			const SERVER_URL = "https://localhost:44344/api/";
 			const RECIPIES = "recipes/";
+			const BATCHES = "batches/";
 			const GET_INSTRUCT = "GET";
 			const HEADER_VALUE = "*";
 			const HEADER = "Access-Control-Allow-Origin" + ": " + HEADER_VALUE;
+
+			function GetLatestDate(inputRecipe)
+			{
+				var returnValue;
+				var theData = new XMLHttpRequest();
+				theData.open(GET_INSTRUCT, SERVER_URL + BATCHES);
+				theData.setRequestHeader('Content-type', 'application/json');
+				theData.send();
+				theData.onload = (e) => {
+					var theDataData = JSON.parse(theData.response);
+					var importantData = [];
+					for (let i = 0; i < theDataData.length; i++)
+					{
+						if (theDataData[i].recipeId == inputRecipe.recipeId)
+						{
+							importantData.push(theDataData[i]);
+						}
+					}
+
+					if (importantData !== undefined)
+					{
+						if (importantData[0] !== undefined)
+						{
+							var shortestData = importantData[0].finishDate;
+						}
+						for (let i = 1; i < importantData.length; i++)
+						{
+							if (importantData[i] !== undefined && importantData[i].finishDate > shortestData)
+							{
+								shortestData = importantData[i].finishDate;
+							}
+						}
+						returnValue = shortestData;
+					}
+				}
+				return returnValue;
+			}
+
 			function GenerateTable() 
 			{
 				var theTable = document.getElementById("nonScheduledBrewsTable");
-				
 				var theData = new XMLHttpRequest();
 				//theData.Header = HEADER;
 				theData.open(GET_INSTRUCT, SERVER_URL + RECIPIES);
@@ -122,32 +160,43 @@ Access-Control-Allow-Origin: *
 				theData.setRequestHeader('Content-type', 'application/json');
 				theData.send();
 				theData.onload = (e) => {
-					console.log(theData.response);
+					//console.log(theDataResponce.response);
+					var theDataResponce = JSON.parse(theData.response);
 
-					for (let i = 0; i < theData.length; i++)
+					console.log("code reached before for loop");
+					console.log("theDataResponce.length=" + theDataResponce.length);
+					for (let i = 0; i < theDataResponce.length; i++)
 					{
+						console.log("code reached inside for loop");
+						console.log("ran for loop " + i + " times");
 						var theRow = theTable.insertRow(1);
 
-						var versionCell             = theRow.insertCell(0);
-						var nameCell                = theRow.insertCell(1);
-						var styleCell               = theRow.insertCell(2);
-						var ibuCell                 = theRow.insertCell(3);
-						var abvCell                 = theRow.insertCell(4);
-						var ingredientsCell         = theRow.insertCell(0);
-						var lastBrewedCell          = theRow.insertCell(0);
-						var inventoryCell           = theRow.insertCell(0);
-						var addToScheduledBrewsCell = theRow.insertCell(0);
+						var versionCell             = theRow.insertCell(-1);
+						var nameCell                = theRow.insertCell(-1);
+						var styleCell               = theRow.insertCell(-1);
+						var ibuCell                 = theRow.insertCell(-1);
+						var abvCell                 = theRow.insertCell(-1);
+						var ingredientsCell         = theRow.insertCell(-1);
+						var lastBrewedCell          = theRow.insertCell(-1);
+						var inventoryCell           = theRow.insertCell(-1);
+						var addToScheduledBrewsCell = theRow.insertCell(-1);
 
-						versionCell           .innerHTML = theData[i].version; 
-						nameCell              .innerHTML = theData[i].name;
-						styleCell             .innerHTML = theData[i].style.name; 
-						ibuCell               .innerHTML = theData[i].ibu;
-						abvCell               .innerHTML = theData[i].abv;
-						ingredientsCell       .innerHTML = "   ";/*"<a> href=page_not_found.html </a>";*/
-						lastBrewedCell        .innerHTML = "   ";/*"<a> href=page_not_found.html </a>";*/
-						inventoryCell         .innerHTML = "   ";/*"<a> href=page_not_found.html </a>";*/
-						addToScheduledBrewsCel.innerHTML = "   ";/*"<button> add to brew </button>";*/
+						versionCell           .innerHTML = theDataResponce[i].version; 
+						nameCell              .innerHTML = theDataResponce[i].name + "</a>";
+						if (theDataResponce[i].style !== undefined && theDataResponce[i].style.name !== undefined)
+						{
+							styleCell             .innerHTML = theDataResponce[i].style.name; 
+							ibuCell               .innerHTML = theDataResponce[i].style.ibuMin; 
+							abvCell               .innerHTML = theDataResponce[i].style.abvMin;
+						}
+						ingredientsCell        .innerHTML = "<a href=page_not_found.html> ingredients </a>";
+						lastBrewedCell         .innerHTML = GetLatestDate(theDataResponce[i]);
+						inventoryCell          .innerHTML = "<a href=page_not_found.html> inventory </a>";
+						addToScheduledBrewsCell.innerHTML = "<button> add to brew </button>";
+
+						
 					}
+					console.log("code reached after for loop");
 				}
 
 
