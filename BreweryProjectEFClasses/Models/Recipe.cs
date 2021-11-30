@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 #nullable disable
 
@@ -11,6 +12,9 @@ namespace BreweryProjectEFCore.Models
         {
             Batches = new HashSet<Batch>();
             RecipeIngredients = new HashSet<RecipeIngredient>();
+            var dbContext = new BreweryProjectContext();
+            this.Style = dbContext.Styles.Find(StyleId+1);
+            this.RecipeIngredients = /*(ICollection<RecipeIngredient>)*/dbContext.RecipeIngredients.Where(theRecipeIngredient => theRecipeIngredient.RecipeId == RecipeId).ToHashSet();
         }
 
         public int RecipeId { get; set; }
@@ -38,8 +42,8 @@ namespace BreweryProjectEFCore.Models
 
         public virtual Equipment Equipment { get; set; }
         public virtual Mash Mash { get; set; }
-        public virtual Style Style { get; set; }
+        public Style Style { get; set; }
         public virtual ICollection<Batch> Batches { get; set; }
-        public virtual ICollection<RecipeIngredient> RecipeIngredients { get; set; }
+        public ICollection<RecipeIngredient> RecipeIngredients { get; set; }
     }
 }
