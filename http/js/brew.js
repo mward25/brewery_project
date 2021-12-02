@@ -72,6 +72,7 @@ function SaveChangesToDataBase()
 			DeleteBatchFromDataBase(outputBatches[i]);
 		}
 	}
+	alert("finished saving changes");
 }
 
 function DeleteBatchFromDataBase(theBatch)
