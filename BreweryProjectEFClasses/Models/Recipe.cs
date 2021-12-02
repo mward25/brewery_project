@@ -13,8 +13,14 @@ namespace BreweryProjectEFCore.Models
             Batches = new HashSet<Batch>();
             RecipeIngredients = new HashSet<RecipeIngredient>();
             var dbContext = new BreweryProjectContext();
-            this.Style = dbContext.Styles.Find(StyleId+1);
-            this.RecipeIngredients = /*(ICollection<RecipeIngredient>)*/dbContext.RecipeIngredients.Where(theRecipeIngredient => theRecipeIngredient.RecipeId == RecipeId).ToHashSet();
+
+            //this.Style = dbContext.Styles.Find(StyleId+1);
+            //int myId = this.RecipeId;
+            //Console.WriteLine("myId={0}", myId);
+            //this.RecipeIngredients = /*(ICollection<RecipeIngredient>)*/dbContext.RecipeIngredients.Where(theRecipeIngredient => theRecipeIngredient.RecipeId == myId).ToHashSet();
+
+
+            //this.Batches = dbContext.Batches.Where( (theBatch => theBatch.RecipeId == myId) ).ToHashSet();
         }
 
         public int RecipeId { get; set; }
@@ -42,8 +48,8 @@ namespace BreweryProjectEFCore.Models
 
         public virtual Equipment Equipment { get; set; }
         public virtual Mash Mash { get; set; }
-        public Style Style { get; set; }
+        public virtual Style Style { get; set; }
         public virtual ICollection<Batch> Batches { get; set; }
-        public ICollection<RecipeIngredient> RecipeIngredients { get; set; }
+        public virtual ICollection<RecipeIngredient> RecipeIngredients { get; set; }
     }
 }

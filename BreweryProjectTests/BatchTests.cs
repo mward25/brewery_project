@@ -89,7 +89,7 @@ namespace BrewProjectTests
         theBatch = testBatch;
             //dbContext.Database.ExecuteSqlRaw("CALL usp_testingResetData()");
         }
-
+            
         [TearDown]
         public void TearDown()
         {
@@ -100,7 +100,7 @@ namespace BrewProjectTests
                 {
                     dbContext.Remove(batchInBatches);
                 }
-
+                
                 dbContext.SaveChanges();
                 Console.WriteLine("stopping TearDown function in BatchTests");
         }

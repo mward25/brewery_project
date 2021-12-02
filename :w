@@ -1,3 +1,4 @@
+Access-Control-Allow-Origin: *
 <html>
 <head><title>Brewery webpage</title></head>
 <body onload="GenerateTables()">
@@ -32,7 +33,6 @@
 	<th bgcolor=#CBC3E3>Inventory</th>
 	<th bgcolor=#CBC3E3>Brew now!</th>
 	<th bgcolor=#CBC3E3>Schedule a brew</th>
-	<th bgcolor=#F30404>Remove Batch</th>
 </tr>
 </thead>
 
@@ -55,7 +55,7 @@
 
 <table cellspacing="0" cellpadding="0" width=80%> 
 	<tr>
-		<th width=9%> <button onclick="SaveChangesToDataBase()"> Save changes </button>  </p> </th>
+		<th width=9%> <button> Save changes </button>  </p> </th>
 		<th width=1%> <a> </a> </th>
 		<th><a>Search by style or name   </a> <input type=search> </th>
 	</tr>
@@ -108,9 +108,6 @@
 			const BATCHES = "batches/";
 			const STYLE = "styles/"
 			const GET_INSTRUCT = "GET";
-			const POST_INSTRUCT = "POST";
-			const PUT_INSTRUCT = "PUT";
-			const DELETE_INSTRUCT = "DELETE";
 			const HEADER_VALUE = "*";
 			const HEADER = "Access-Control-Allow-Origin" + ": " + HEADER_VALUE;
 
@@ -118,64 +115,12 @@
 			const PAGE_NOT_FOUND_END = "</a>";
 
 			var outputBatches = [];
-			var brewNowOutputBatches = [];
-			var deleteBatches = [];
 
 			function GenerateTables()
 			{
 				GenerateRecipeTable();
-				GenerateBatchesTable();
+				//GenerateBatchesTable();
 			}
-
-			function SaveChangesToDataBase()
-			{
-				for (let i = 0; i < outputBatches.length; i++)
-				{
-					if (brewNowOutputBatches[i] == true)
-					{
-						SaveBatchToDataBase(outputBatches[i]);
-					}
-					else if (deleteBatches[i] == true)
-					{
-						DeleteBatchFromDataBase(outputBatches[i]);
-					}
-				}
-			}
-
-			function DeleteBatchFromDataBase(theBatch)
-			{
-				if (theBatch.batchId !== null || theBatch.batchId !== undefined)
-				{
-					var theBatchDestroyer = new XMLHttpRequest();
-					theBatchDestroyer.open(DELETE_INSTRUCT, SERVER_URL + BATCHES + theBatch.batchId);
-					theBatchDestroyer.setRequestHeader('Content-type', 'application/json');
-					theBatchDestroyer.send();
-				}
-			}
-
-			// Note: if the batch already exists the function will just update the batch
-			function SaveBatchToDataBase(theBatch)
-			{
-				var theBatchSaver = new XMLHttpRequest();
-
-				if (theBatch.batchId == null || theBatch.batchId == undefined)
-				{
-					theBatchSaver.open(POST_INSTRUCT, SERVER_URL + BATCHES);
-					theBatchSaver.setRequestHeader('Content-type', 'application/json');
-					theBatchSaver.send(JSON.stringify(theBatch));
-					theBatchSaver.onload = function() {
-						//alert(theBatchSaver.response);
-						theBatch.batchId = JSON.parse(theBatchSaver.response).batchId;
-					}
-				}
-				else
-				{
-					theBatchSaver.open(PUT_INSTRUCT, SERVER_URL + BATCHES + theBatch.batchId);
-					theBatchSaver.setRequestHeader('Content-type', 'application/json');
-					theBatchSaver.send(JSON.stringify(theBatch));
-				}
-			}
-
 
 			// I got this function from Andy E on https://stackoverflow.com/questions/3075577/convert-mysql-datetime-stamp-into-javascripts-date-format
 			Date.createFromMysql = function(mysql_string) 
@@ -184,23 +129,12 @@
 
 				if( typeof mysql_string === 'string' )
 				{
-					console.log("running function createFromMysql, mysql_string="  + mysql_string);
-					const tmpRegex = /T/;
-					var tmpSqlString = mysql_string.substr(0, mysql_string.search(tmpRegex));
-					console.log("in createFromMysql, tmpSqlString=", tmpSqlString);
-					t = tmpSqlString.split(/[- :]/);
+					t = mysql_string.split(/[- :]/);
 					//when t[3], t[4] and t[5] are missing they defaults to zero
 					result = new Date(t[0], t[1] - 1, t[2], t[3] || 0, t[4] || 0, t[5] || 0);          
-					console.log("in createFromMysql, result=" + result.toString());
 				}
 
 				return result;   
-			}
-			
-			function JavaScriptDateToMySqlDate(inputDate)
-			{
-				// got this from Gajus on https://stackoverflow.com/questions/5129624/convert-js-date-time-to-mysql-datetime/5133807
-				return inputDate.toISOString().slice(0, 19).replace('T', ' ');
 			}
 
 			function GetLatestDate(inputRecipe)
@@ -248,16 +182,16 @@
 
 			function GetRemoteVar(serverUrl, query)
 			{
+
 				var theData= new XMLHttpRequest();
 				var returnValue;
-				theData.open(GET_INSTRUCT, serverUrl + query, false);
-				theData.setRequestHeader('Access-Control-Allow-Origin', 'SERVER_URL');
+				theData.open(GET_INSTRUCT, serverUrl + RECIPIES);
 				theData.setRequestHeader('Content-type', 'application/json');
-				theData.send();
 
-				returnValue = JSON.parse(theData.response);
-				console.log("returnValue is " + returnValue.name);
-				return returnValue;
+				theData.onload = (e) => {
+					returnValue = JSON.parse(theData.response);
+					return returnValue;
+				}
 			}
 
 			function GenerateRecipeTable() 
@@ -294,16 +228,13 @@
 						var inventoryCell           = theRow.insertCell(-1);
 						var addToScheduledBrewsCell = theRow.insertCell(-1);
 
-						var recipeStyle = GetRemoteVar(SERVER_URL, STYLE + theDataResponce[i].styleId);
-						console.log("recipe.styleId=" + theDataResponce[i].styleId + " recipeStyle=" + (recipeStyle == undefined || recipeStyle == null ? "does not exist" : recipeStyle.name));
+						recipeStyle = GetRemoteVar(SERVER_URL, STYLE + theDataResponce[i].styleId);
+						//console.log("recipeStyle=" + recipeStyle.name);
 						versionCell           .innerHTML = theDataResponce[i].version; 
 						nameCell              .innerHTML = theDataResponce[i].name + "</a>";
-						if (recipeStyle !== undefined)
-						{
-							styleCell             .innerHTML = recipeStyle.name; 
-							ibuCell               .innerHTML = recipeStyle.ibuMin;
-							abvCell               .innerHTML = recipeStyle.abvMin;
-						}
+						styleCell             .innerHTML = recipeStyle.name; 
+						ibuCell               .innerHTML = recipeStyle.ibuMin;
+						abvCell               .innerHTML = recipeStyle.abvMin;
 						
 						ingredientsCell        .innerHTML = PAGE_NOT_FOUND_REFERENCE_START + "ingredients" + PAGE_NOT_FOUND_END;
 						var latestDate = theDataResponce[i].date;
@@ -321,63 +252,13 @@
 						console.log("latestDate=" + latestDate);
 						lastBrewedCell         .innerHTML = latestDate;
 						inventoryCell          .innerHTML = PAGE_NOT_FOUND_REFERENCE_START + "inventory" + PAGE_NOT_FOUND_END;
-						addToScheduledBrewsCell.innerHTML = "<button onclick=\"AddBatchFromRecipeId(" + theDataResponce[i].recipeId + ")\"> add to brew </button>";
+						addToScheduledBrewsCell.innerHTML = "<button> add to brew </button>";
 					}
 					console.log("code reached after for loop");
 				}
-			}
-				function AddBatchFromRecipeId(theId)
-				{
-					var theRecipe = GetRemoteVar(SERVER_URL, RECIPIES + theId);
-					var theStyle = GetRemoteVar(SERVER_URL, STYLE + theRecipe.recipeId);
-					var today = new Date();
-
-					var theBatch = {
-						//"batchId": null,
-						"recipeId": theRecipe.recipeId,
-						"equipmentId": 1,
-						"volume": theRecipe.volume,
-						"scheduledStartDate": JavaScriptDateToMySqlDate(today),
-						"startDate": null,
-						"estimatedFinishDate": null,
-						"finishDate": null,
-						"unitCost": 0,
-						"notes": theStyle.notes,
-						"tasteNotes": "not yet entered",
-						"tasteRating": 0,
-						"og": theStyle.ogMin,
-						"fg": theStyle.fgMin,
-						"carbonation": theStyle.carbMin,
-						"fermentationStages": 0,
-						"primaryAge": 0,
-						"primaryTemp": 0,
-						"secondaryAge": 0,
-						"secondaryTemp": 0,
-						"tertiaryAge": 0,
-						"age": 0,
-						"temp": theRecipe.temp,
-						"ibu": theStyle.ibuMin,
-						"ibuMethod": "not yet determined",
-						"abv": theStyle.abvMin,
-						"actualEfficiency": theRecipe.actualEfficiency,
-						"calories": theRecipe.calories,
-						"carbonationUsed": "not yet determined",
-						"forcedCarbonation": 0,
-						"kegPrimingFactor": 0,
-						"carbonationTemp": 0,
-						"equipment": theRecipe.equipmentId,
-						"recipe": null,
-						"batchContainers": [],
-						"ingredientInventorySubtractions": [],
-						"inventoryTransactions": [],
-						"products": []
-					};
-					AddBatch(theBatch);
-				}
 				
-				function AddBatch(theBatch)
+				function AddBatch(outputBatchesInput = outputBatches, theBatch)
 				{
-					console.log("running function addBatch");
 
 					if (theBatch == undefined || theBatch == null)
 					{
@@ -385,41 +266,41 @@
 					}
 					else
 					{
-						var theRecipe = GetRemoteVar(SERVER_URL, RECIPIES + theBatch.recipeId);
-						var recipeStyle = GetRemoteVar(SERVER_URL, STYLE + theRecipe.styleId);
+						var recipeGetter = new XMLHttpRequest();
+						recipeGetter.open(GET_INSTRUCT, SERVER_URL + RECIPIES + theBatch.recipeId);
+						recipeGetter.setRequestHeader('Content-type', 'application/json');
+						recipeGetter.send();
+
+						var theRecipe;
+
+						recipeGetter.onload = (e) => {
+							theRecipe = JSON.parse(recipeGetter.response);
+						}
 						
 						
 
-						outputBatches.push(theBatch);
-						brewNowOutputBatches.push(false);
-						deleteBatches.push(false);
-						var insertedLocation = outputBatches.length-1;
+						outputBatchesInput.push(theBatch);
 						
-						var theTable = document.getElementById("batchesTable");
-						var theRow = theTable.insertRow(-1);
+						var theTable = document.getElementById("nonScheduledBrewsTable");
+						var theRow = theTable.insertRow(1);
 
+						var Version             = theRow.insertCell(-1);
+						var Name                = theRow.insertCell(-1);
+						var Style               = theRow.insertCell(-1);
+						var IBU                 = theRow.insertCell(-1);
+						var ABV                 = theRow.insertCell(-1);
+						var Ingredients         = theRow.insertCell(-1);
+						var LastBrewed          = theRow.insertCell(-1);
+						var Inventory           = theRow.insertCell(-1);
+						var AddToScheduledBrews = theRow.insertCell(-1);
 
-						var Name = theRow.insertCell(-1);
-						var Style = theRow.insertCell(-1);
-						var IBU = theRow.insertCell(-1);
-						var ABV = theRow.insertCell(-1);
-						var Recipe = theRow.insertCell(-1);
-						var Inventory = theRow.insertCell(-1);
-						var BrewNow = theRow.insertCell(-1);
-						var ScheduleABrew = theRow.insertCell(-1);
-						var DeleteBatch = theRow.insertCell(-1);
 						
+						Version    .innerHTML = theRecipe.version;
 						Name       .innerHTML = theRecipe.name;
 						Style      .innerHTML = recipeStyle.name;
 						IBU        .innerHTML = recipeStyle.ibuMin;
 						ABV        .innerHTML = recipeStyle.abvMin;
-						Recipe     .innerHTML = PAGE_NOT_FOUND_REFERENCE_START + "recipe" + PAGE_NOT_FOUND_END;
-						Inventory  .innerHTML = PAGE_NOT_FOUND_REFERENCE_START + "inventory" + PAGE_NOT_FOUND_END;
-						var scheduledDate = Date.createFromMysql(theBatch.scheduledStartDate);
-						BrewNow.innerHTML = "<input type=checkbox onchange=\"if (this.checked) {updateBatchBrewNow( " + insertedLocation + ",true)} else {  updateBatchBrewNow( " + insertedLocation + ", false)}\">Brew now</input>";
-
-						ScheduleABrew.innerHTML = "<input type=date value=\"" + scheduledDate.getFullYear() + "-" + scheduledDate.getMonth() + "-" + (scheduledDate.getDate() < 10 ? '0' + scheduledDate.getDate() : scheduledDate.getDate()) + "\" onchange=\"updateBatchDate(" + insertedLocation + ", this.value)\">Schedule a brew:</input>";
-						DeleteBatch.innerHTML = "<input type=checkbox onchange=\"if (this.checked) {updateBatchDeleteBatch( " + insertedLocation + ",true)} else {  updateBatchDeleteBatch( " + insertedLocation + ", false)}\">DeleteBatch</input>";
+						Ingredients.innerHTML = PAGE_NOT_FOUND_REFERENCE_START + "ingredients" + PAGE_NOT_FOUND_END;
 						var latestDate;
 						if (theRecipe.date == null)
 						{
@@ -431,44 +312,15 @@
 						}
 						console.log("latestDate=" + latestDate);
 						
-						//LastBrewed.innerHTML = latestDate;
-						//Inventory.innerHTML = PAGE_NOT_FOUND_REFERENCE_START + "inventory" + PAGE_NOT_FOUND_END;
+						LastBrewed.innerHTML = latestDate;
+						Inventory.innerHTML = PAGE_NOT_FOUND_REFERENCE_START + "inventory" + PAGE_NOT_FOUND_END;
 					}
-				}
-				
-				function updateBatchDate(theArrayIndex, value)
-				{
-					console.log("running function updateBatchDate");
-					outputBatches[theArrayIndex].scheduledStartDate = value;
-					console.log("outputBatches[theArrayIndex].scheduledStartDate=" + outputBatches[theArrayIndex].scheduledStartDate);
-				}
-
-				function updateBatchBrewNow(theArrayIndex, value)
-				{
-					
-					console.log("running function updateBatchBrewNow");
-					brewNowOutputBatches[theArrayIndex] = value;
-					console.log("brewNowOutputBatches[theArrayIndex]=" + brewNowOutputBatches[theArrayIndex]);
-				}
-
-				function updateBatchDeleteBatch(theArrayIndex, value)
-				{
-					console.log("running function updateBatchDeleteBatch");
-					deleteBatches[theArrayIndex] = value;
-					console.log("deleteBatches[theArrayIndex]=" + deleteBatches[theArrayIndex]);
 				}
 
 				function GenerateBatchesTable()
 				{
 					console.log("running function GenerateBatchesTable");
-					var batches = GetRemoteVar(SERVER_URL, BATCHES);
-					console.log("batches.length=" + batches.length);
 
-					for (let i = 0; i < batches.length; i++)
-					{
-						AddBatch(batches[i]);
-					}
-					console.log("finishing function GenerateBatchesTable");
 				}
 
 
@@ -511,5 +363,5 @@
 			//		var dvTable = document.getElementById("dvTable");
 			//		dvTable.innerHTML = "";
 			//		dvTable.appendChild(table);
-			
+			}
 	</script>
