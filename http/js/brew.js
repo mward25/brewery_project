@@ -37,18 +37,29 @@ function SearchBarWork(searchQuery)
 	var sortedRecipeArray = recipeArray.sort(
 			(theRecipe) => {
 				var theString = theRecipe.name.toLowerCase();
+				var styleString = theRecipe.style.name.toLowerCase();
 				console.log("theRecipe.style.name=" + theRecipe.style.name);
 				// filter by name and style
-				if (theString.substr(0, searchQuery.length) == searchQuery.toLowerCase() || ( theRecipe.style !== undefined && searchQuery.toLowerCase() == theRecipe.style.name.toLowerCase().substr(0, searchQuery.length) ))
+				//if (theString.substr(0, searchQuery.length) == searchQuery.toLowerCase() || ( theRecipe.style !== undefined && searchQuery.toLowerCase() == theRecipe.style.name.toLowerCase().substr(0, searchQuery.length) ))
+				
+				var theStringResult = theString.indexOf(searchQuery.toLowerCase()); 
+				var styleStringResult = styleString.indexOf(searchQuery.toLowerCase());
+
+				if (theStringResult > -1)
 				{
 					console.log("in sort function, they were the same, returning 1");
-					return 1;
+					return (Number.MAX_SAFE_INTEGER)/(theStringResult+1);
+				}
+				else if (styleStringResult > -1)
+				{
+					return (Number.MAX_SAFE_INTEGER)/(styleStringResult+1);
 				}
 				else
 				{
 					console.log("they were not the same, returning 0");
 					return 0;
 				}
+				
 			}
 		)
 
