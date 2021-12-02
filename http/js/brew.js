@@ -14,8 +14,8 @@ const DELETE_INSTRUCT = "DELETE";
 const HEADER_VALUE = "*";
 const HEADER = "Access-Control-Allow-Origin" + ": " + HEADER_VALUE;
 
-//const PAGE_NOT_FOUND_REFERENCE_START = "<a href=page_not_found.html>";
-//const PAGE_NOT_FOUND_END = "</a>";
+const PAGE_NOT_FOUND_REFERENCE_START = "<a href=page_not_found.html>";
+const PAGE_NOT_FOUND_END = "</a>";
 
 // These are parallel arrays
 var outputBatches = [];
