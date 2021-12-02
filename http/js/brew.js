@@ -61,6 +61,10 @@ function SaveChangesToDataBase()
 	{
 		if (brewNowOutputBatches[i] == true)
 		{
+			if (outputBatches[i].scheduledStartDate == undefined || outputBatches[i].scheduledStartDate == null)
+			{
+				alert("StartDate on batch " + outputBatches[i].name + " was not set");
+			}
 			SaveBatchToDataBase(outputBatches[i]);
 		}
 		else if (deleteBatches[i] == true)
@@ -301,7 +305,7 @@ function AddBatchFromRecipeId(theId)
 		"recipeId": theRecipe.recipeId,
 		"equipmentId": 1,
 		"volume": theRecipe.volume,
-		"scheduledStartDate": JavaScriptDateToMySqlDate(today),
+		"scheduledStartDate": "0000-01-00",
 		"startDate": null,
 		"estimatedFinishDate": null,
 		"finishDate": null,
@@ -383,7 +387,22 @@ function AddBatch(theBatch)
 		BrewNow.innerHTML = "<input type=checkbox onchange=\"if (this.checked) {updateBatchBrewNow( " + insertedLocation + ",true)} else {  updateBatchBrewNow( " + insertedLocation + ", false)}\">Brew now</input>";
 
 		// Set date to date stored in database
-		ScheduleABrew.innerHTML = "<input type=date value=\"" + scheduledDate.getFullYear() + "-" + scheduledDate.getMonth() + "-" + (scheduledDate.getDate() < 10 ? '0' + scheduledDate.getDate() : scheduledDate.getDate()) + "\" onchange=\"updateBatchDate(" + insertedLocation + ", this.value)\">Schedule a brew:</input>";
+		var theDate = scheduledDate.getDate() + 1;
+		if (theDate < 10)
+		{
+			theDate = '0' + theDate;
+		}
+		var theMonth = scheduledDate.getMonth()+1;
+		if (String(theMonth).length < 2)
+		{
+			theMonth = '0' + theMonth;
+		}
+		var theYear = scheduledDate.getFullYear();
+
+		theDate = String(theDate);
+		theMonth = String(theMonth);
+		theYear = String(theYear);
+		ScheduleABrew.innerHTML = "<input type=date value=\"" + theYear + "-" + theMonth + "-" + theDate + "\" onchange=\"updateBatchDate(" + insertedLocation + ", this.value)\">Schedule a brew:</input>";
 		DeleteBatch.innerHTML = "<input type=checkbox onchange=\"if (this.checked) {updateBatchDeleteBatch( " + insertedLocation + ",true)} else {  updateBatchDeleteBatch( " + insertedLocation + ", false)}\">DeleteBatch</input>";
 		var latestDate;
 		if (theRecipe.date == null)
